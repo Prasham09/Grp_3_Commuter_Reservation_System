@@ -90,3 +90,26 @@ END CRS_VALIDATION_PKG;
 -- PACKAGE BODY: CRS_VALIDATION_PKG
 -- Implementation of all validation functions
 -- ============================================
+CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
+    
+    -- ========================================
+    -- FUNCTION: is_train_valid
+    -- Validates if train exists in system
+    -- Business Rule: Validate train number
+    -- ========================================
+    FUNCTION is_train_valid(p_train_id IN NUMBER) RETURN BOOLEAN IS
+        v_count NUMBER;
+    BEGIN
+        SELECT COUNT(*)
+        INTO v_count
+        FROM CRS_TRAIN_INFO
+        WHERE train_id = p_train_id;
+        
+        RETURN (v_count > 0);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_train_valid;
+
+END CRS_VALIDATION_PKG;
+/
