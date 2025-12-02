@@ -125,3 +125,7 @@ CREATE TABLE CRS_RESERVATION (
 );
 
 PROMPT 'CRS_RESERVATION created';
+
+COMMIT;
+
+PROMPT 'All tables created successfully!';
