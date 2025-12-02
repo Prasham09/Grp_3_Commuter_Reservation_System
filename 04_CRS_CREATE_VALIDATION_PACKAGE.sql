@@ -130,5 +130,36 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_passenger_valid;
     
+    -- ========================================
+    -- FUNCTION: is_train_available_on_date
+    -- Checks if train runs on given date
+    -- Business Rule: Train availability check
+    -- ========================================
+    FUNCTION is_train_available_on_date(
+        p_train_id IN NUMBER,
+        p_travel_date IN DATE
+    ) RETURN BOOLEAN IS
+        v_count NUMBER;
+        v_day_of_week VARCHAR2(10);
+    BEGIN
+        -- Get day of week for travel date
+        v_day_of_week := UPPER(TO_CHAR(p_travel_date, 'DAY'));
+        v_day_of_week := TRIM(v_day_of_week);
+        
+        -- Check if train is scheduled for that day
+        SELECT COUNT(*)
+        INTO v_count
+        FROM CRS_TRAIN_SCHEDULE ts
+        JOIN CRS_DAY_SCHEDULE ds ON ts.sch_id = ds.sch_id
+        WHERE ts.train_id = p_train_id
+        AND ds.day_of_week = v_day_of_week
+        AND ts.is_in_service = 'Y';
+        
+        RETURN (v_count > 0);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_train_available_on_date;
+    
 END CRS_VALIDATION_PKG;
 /
