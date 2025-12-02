@@ -85,3 +85,8 @@ CREATE OR REPLACE PACKAGE CRS_VALIDATION_PKG AS
     
 END CRS_VALIDATION_PKG;
 /
+
+-- ============================================
+-- PACKAGE BODY: CRS_VALIDATION_PKG
+-- Implementation of all validation functions
+-- ============================================
