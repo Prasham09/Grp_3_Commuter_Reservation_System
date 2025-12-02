@@ -40,3 +40,18 @@ INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN005', 'New York Pen
 INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN006', 'Philadelphia 30th Street', 'Washington DC Union', 40, 40, 90.00, 50.00);
 
 PROMPT '6 trains inserted successfully.';
+
+-- Insert Train Schedules
+PROMPT 'Creating Train Schedules...';
+
+-- TRN001 - Available all days (7 days a week)
+DECLARE
+    v_train_id NUMBER;
+BEGIN
+    SELECT train_id INTO v_train_id FROM CRS_TRAIN_INFO WHERE train_number = 'TRN001';
+    FOR day IN (SELECT sch_id FROM CRS_DAY_SCHEDULE) LOOP
+        INSERT INTO CRS_TRAIN_SCHEDULE VALUES (seq_tsch_id.NEXTVAL, day.sch_id, v_train_id, 'Y');
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('TRN001 scheduled for all days');
+END;
+/
