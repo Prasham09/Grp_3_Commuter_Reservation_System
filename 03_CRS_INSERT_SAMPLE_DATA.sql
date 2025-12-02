@@ -29,3 +29,14 @@ INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'SATURDAY', 'Y');
 INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'SUNDAY', 'Y');
 
 PROMPT '7 days inserted successfully.';
+
+-- Insert Train Information
+PROMPT 'Inserting Train Information...';
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN001', 'Boston South Station', 'New York Penn Station', 40, 40, 150.00, 75.00);
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN002', 'Boston South Station', 'Washington DC Union', 40, 40, 200.00, 100.00);
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN003', 'New York Penn Station', 'Philadelphia 30th Street', 40, 40, 80.00, 45.00);
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN004', 'Boston South Station', 'Providence Station', 40, 40, 50.00, 25.00);
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN005', 'New York Penn Station', 'Boston South Station', 40, 40, 150.00, 75.00);
+INSERT INTO CRS_TRAIN_INFO VALUES (seq_train_id.NEXTVAL, 'TRN006', 'Philadelphia 30th Street', 'Washington DC Union', 40, 40, 90.00, 50.00);
+
+PROMPT '6 trains inserted successfully.';
