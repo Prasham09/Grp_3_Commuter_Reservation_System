@@ -314,5 +314,35 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_email_unique;
     
+    -- ========================================
+    -- FUNCTION: is_phone_unique
+    -- Checks if phone is unique
+    -- Business Rule: Phone must be unique
+    -- ========================================
+    FUNCTION is_phone_unique(
+        p_phone IN VARCHAR2,
+        p_passenger_id IN NUMBER DEFAULT NULL
+    ) RETURN BOOLEAN IS
+        v_count NUMBER;
+    BEGIN
+        IF p_passenger_id IS NULL THEN
+            SELECT COUNT(*)
+            INTO v_count
+            FROM CRS_PASSENGER
+            WHERE phone = p_phone;
+        ELSE
+            SELECT COUNT(*)
+            INTO v_count
+            FROM CRS_PASSENGER
+            WHERE phone = p_phone
+            AND passenger_id != p_passenger_id;
+        END IF;
+        
+        RETURN (v_count = 0);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_phone_unique;
+    
 END CRS_VALIDATION_PKG;
 /
