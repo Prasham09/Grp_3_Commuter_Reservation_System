@@ -55,3 +55,15 @@ CREATE TABLE CRS_TRAIN_INFO (
 );
 
 PROMPT 'CRS_TRAIN_INFO created';
+
+-- ============================================
+-- TABLE 2: CRS_DAY_SCHEDULE
+-- ============================================
+CREATE TABLE CRS_DAY_SCHEDULE (
+    sch_id NUMBER PRIMARY KEY,
+    day_of_week VARCHAR2(10) NOT NULL UNIQUE,
+    is_week_end CHAR(1) DEFAULT 'N' NOT NULL,
+    CONSTRAINT chk_day_weekend CHECK (is_week_end IN ('Y', 'N'))
+);
+
+PROMPT 'CRS_DAY_SCHEDULE created';
