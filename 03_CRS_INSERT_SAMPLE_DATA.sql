@@ -79,3 +79,15 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('TRN003 scheduled for weekends only');
 END;
 /
+
+-- TRN004 - Available all days
+DECLARE
+    v_train_id NUMBER;
+BEGIN
+    SELECT train_id INTO v_train_id FROM CRS_TRAIN_INFO WHERE train_number = 'TRN004';
+    FOR day IN (SELECT sch_id FROM CRS_DAY_SCHEDULE) LOOP
+        INSERT INTO CRS_TRAIN_SCHEDULE VALUES (seq_tsch_id.NEXTVAL, day.sch_id, v_train_id, 'Y');
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('TRN004 scheduled for all days');
+END;
+/
