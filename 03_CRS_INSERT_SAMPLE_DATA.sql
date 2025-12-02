@@ -115,3 +115,32 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('TRN006 scheduled for weekends only');
 END;
 /
+
+-- Insert Sample Passengers
+PROMPT 'Inserting Sample Passengers...';
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'John', 'Michael', 'Smith', 
+    TO_DATE('1990-05-15', 'YYYY-MM-DD'), '123 Main St', 'Boston', 'MA', '02101', 
+    'john.smith@email.com', '6171234567', SYSDATE);
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'Sarah', 'Anne', 'Johnson', 
+    TO_DATE('1985-08-22', 'YYYY-MM-DD'), '456 Oak Ave', 'Cambridge', 'MA', '02139', 
+    'sarah.johnson@email.com', '6179876543', SYSDATE);
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'Michael', NULL, 'Williams', 
+    TO_DATE('2010-03-10', 'YYYY-MM-DD'), '789 Elm St', 'Somerville', 'MA', '02144', 
+    'michael.williams@email.com', '6175551234', SYSDATE);
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'Emily', 'Grace', 'Brown', 
+    TO_DATE('1955-12-05', 'YYYY-MM-DD'), '321 Pine Rd', 'Brookline', 'MA', '02445', 
+    'emily.brown@email.com', '6175559876', SYSDATE);
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'David', 'Robert', 'Davis', 
+    TO_DATE('1995-07-18', 'YYYY-MM-DD'), '654 Maple Dr', 'Newton', 'MA', '02458', 
+    'david.davis@email.com', '6175555678', SYSDATE);
+
+INSERT INTO CRS_PASSENGER VALUES (seq_passenger_id.NEXTVAL, 'Jennifer', 'Marie', 'Wilson', 
+    TO_DATE('2008-11-30', 'YYYY-MM-DD'), '987 Cedar Ln', 'Quincy', 'MA', '02169', 
+    'jennifer.wilson@email.com', '6175554321', SYSDATE);
+
+COMMIT;
