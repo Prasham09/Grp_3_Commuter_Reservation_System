@@ -1,0 +1,15 @@
+-- ============================================
+-- SCRIPT 3: INSERT_SAMPLE_DATA.sql
+-- Connect as CRS_ADMIN and run this script
+-- ============================================
+SHOW USER;
+
+
+TRUNCATE TABLE CRS_RESERVATION;
+TRUNCATE TABLE CRS_TRAIN_SCHEDULE;
+TRUNCATE TABLE CRS_PASSENGER;
+TRUNCATE TABLE CRS_TRAIN_INFO;
+TRUNCATE TABLE CRS_DAY_SCHEDULE;
+
+
+SET SERVEROUTPUT ON SIZE UNLIMITED;
