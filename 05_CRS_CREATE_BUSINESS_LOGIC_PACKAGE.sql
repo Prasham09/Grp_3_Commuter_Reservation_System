@@ -3,6 +3,18 @@
 --️ MUST RUN AS CRS_ADMIN ️
 -- ============================================
 
+SET SERVEROUTPUT ON SIZE UNLIMITED;
+
+-- Verify you're connected as CRS_ADMIN
+SHOW USER;
+
+-- Drop existing package
+BEGIN
+    EXECUTE IMMEDIATE 'DROP PACKAGE CRS_BOOKING_PKG';
+EXCEPTION
+    WHEN OTHERS THEN NULL;
+END;
+/
 
 -- ============================================
 -- PACKAGE SPECIFICATION
