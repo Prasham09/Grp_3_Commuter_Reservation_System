@@ -222,5 +222,40 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN 0;
     END get_total_seats;
     
+    -- ========================================
+    -- FUNCTION: get_available_seats
+    -- Returns number of available seats
+    -- Business Rule: Check seat availability
+    -- ========================================
+    FUNCTION get_available_seats(
+        p_train_id IN NUMBER,
+        p_travel_date IN DATE,
+        p_seat_class IN VARCHAR2
+    ) RETURN NUMBER IS
+        v_total_seats NUMBER;
+        v_booked_seats NUMBER;
+        v_available_seats NUMBER;
+    BEGIN
+        -- Get total seats for class
+        v_total_seats := get_total_seats(p_train_id, p_seat_class);
+        
+        -- Get booked seats (confirmed only, not cancelled)
+        SELECT COUNT(*)
+        INTO v_booked_seats
+        FROM CRS_RESERVATION
+        WHERE train_id = p_train_id
+        AND travel_date = p_travel_date
+        AND UPPER(seat_class) = UPPER(p_seat_class);
+        
+        v_available_seats := v_total_seats - v_booked_seats;
+        
+        RETURN v_available_seats;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN 0;
+        WHEN OTHERS THEN
+            RETURN 0;
+    END get_available_seats;
+    
 END CRS_VALIDATION_PKG;
 /
