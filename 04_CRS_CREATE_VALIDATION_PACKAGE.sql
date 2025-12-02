@@ -258,5 +258,31 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN 0;
     END get_available_seats;
     
+    -- ========================================
+    -- FUNCTION: get_waitlist_count
+    -- Returns current waitlist count
+    -- Business Rule: Max 5 waitlist per class
+    -- ========================================
+    FUNCTION get_waitlist_count(
+        p_train_id IN NUMBER,
+        p_travel_date IN DATE,
+        p_seat_class IN VARCHAR2
+    ) RETURN NUMBER IS
+        v_waitlist_count NUMBER;
+    BEGIN
+        SELECT COUNT(*)
+        INTO v_waitlist_count
+        FROM CRS_RESERVATION
+        WHERE train_id = p_train_id
+        AND travel_date = p_travel_date
+        AND UPPER(seat_class) = UPPER(p_seat_class)
+        AND seat_status = 'WAITLISTED';
+        
+        RETURN v_waitlist_count;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN 0;
+    END get_waitlist_count;
+    
 END CRS_VALIDATION_PKG;
 /
