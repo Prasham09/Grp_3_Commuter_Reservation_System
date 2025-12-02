@@ -13,3 +13,19 @@ TRUNCATE TABLE CRS_DAY_SCHEDULE;
 
 
 SET SERVEROUTPUT ON SIZE UNLIMITED;
+
+PROMPT '========================================';
+PROMPT 'Inserting Sample Data...';
+PROMPT '========================================';
+
+-- Insert Day Schedule (7 days of the week)
+PROMPT 'Inserting Day Schedule...';
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'MONDAY', 'N');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'TUESDAY', 'N');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'WEDNESDAY', 'N');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'THURSDAY', 'N');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'FRIDAY', 'N');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'SATURDAY', 'Y');
+INSERT INTO CRS_DAY_SCHEDULE VALUES (seq_sch_id.NEXTVAL, 'SUNDAY', 'Y');
+
+PROMPT '7 days inserted successfully.';
