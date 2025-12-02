@@ -181,5 +181,18 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_booking_date_valid;
     
+    -- ========================================
+    -- FUNCTION: is_seat_class_valid
+    -- Validates seat class (BUSINESS or ECONOMY)
+    -- Business Rule: Two classes only
+    -- ========================================
+    FUNCTION is_seat_class_valid(p_seat_class IN VARCHAR2) RETURN BOOLEAN IS
+    BEGIN
+        RETURN (UPPER(p_seat_class) IN ('BUSINESS', 'ECONOMY'));
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_seat_class_valid;
+    
 END CRS_VALIDATION_PKG;
 /
