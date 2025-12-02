@@ -344,5 +344,17 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_phone_unique;
     
+    -- ========================================
+    -- FUNCTION: calculate_age
+    -- Calculates age from date of birth
+    -- ========================================
+    FUNCTION calculate_age(p_dob IN DATE) RETURN NUMBER IS
+    BEGIN
+        RETURN FLOOR(MONTHS_BETWEEN(SYSDATE, p_dob) / 12);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN 0;
+    END calculate_age;
+    
 END CRS_VALIDATION_PKG;
 /
