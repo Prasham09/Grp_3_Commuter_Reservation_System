@@ -356,5 +356,27 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN 0;
     END calculate_age;
     
+    -- ========================================
+    -- FUNCTION: get_passenger_category
+    -- Returns passenger category based on age
+    -- Business Rule: Minor/Major/Senior based on DOB
+    -- ========================================
+    FUNCTION get_passenger_category(p_dob IN DATE) RETURN VARCHAR2 IS
+        v_age NUMBER;
+    BEGIN
+        v_age := calculate_age(p_dob);
+        
+        IF v_age < 18 THEN
+            RETURN 'MINOR';
+        ELSIF v_age >= 60 THEN
+            RETURN 'SENIOR CITIZEN';
+        ELSE
+            RETURN 'MAJOR (ADULT)';
+        END IF;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN 'UNKNOWN';
+    END get_passenger_category;
+    
 END CRS_VALIDATION_PKG;
 /
