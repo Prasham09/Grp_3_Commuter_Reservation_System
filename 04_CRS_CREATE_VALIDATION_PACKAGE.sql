@@ -161,5 +161,25 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_train_available_on_date;
     
+    -- ========================================
+    -- FUNCTION: is_booking_date_valid
+    -- Validates booking is within 7 days advance
+    -- Business Rule: Only one week advance booking
+    -- ========================================
+    FUNCTION is_booking_date_valid(
+        p_booking_date IN DATE,
+        p_travel_date IN DATE
+    ) RETURN BOOLEAN IS
+        v_days_diff NUMBER;
+    BEGIN
+        v_days_diff := TRUNC(p_travel_date) - TRUNC(p_booking_date);
+        
+        -- Must be between 0 and 7 days in advance
+        RETURN (v_days_diff >= 0 AND v_days_diff <= 7);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_booking_date_valid;
+    
 END CRS_VALIDATION_PKG;
 /
