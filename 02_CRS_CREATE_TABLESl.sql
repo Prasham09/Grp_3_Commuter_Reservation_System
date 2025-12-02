@@ -67,3 +67,19 @@ CREATE TABLE CRS_DAY_SCHEDULE (
 );
 
 PROMPT 'CRS_DAY_SCHEDULE created';
+
+-- ============================================
+-- TABLE 3: CRS_TRAIN_SCHEDULE
+-- ============================================
+CREATE TABLE CRS_TRAIN_SCHEDULE (
+    tsch_id NUMBER PRIMARY KEY,
+    sch_id NUMBER NOT NULL,
+    train_id NUMBER NOT NULL,
+    is_in_service CHAR(1) DEFAULT 'Y' NOT NULL,
+    CONSTRAINT fk_tsch_schedule FOREIGN KEY (sch_id) REFERENCES CRS_DAY_SCHEDULE(sch_id),
+    CONSTRAINT fk_tsch_train FOREIGN KEY (train_id) REFERENCES CRS_TRAIN_INFO(train_id),
+    CONSTRAINT chk_tsch_service CHECK (is_in_service IN ('Y', 'N')),
+    CONSTRAINT uk_tsch_schedule UNIQUE (sch_id, train_id)
+);
+
+PROMPT 'CRS_TRAIN_SCHEDULE created';
