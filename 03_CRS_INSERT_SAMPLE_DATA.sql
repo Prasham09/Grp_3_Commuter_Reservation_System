@@ -67,3 +67,15 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('TRN002 scheduled for weekdays only');
 END;
 /
+
+-- TRN003 - Available only on weekends (Saturday and Sunday)
+DECLARE
+    v_train_id NUMBER;
+BEGIN
+    SELECT train_id INTO v_train_id FROM CRS_TRAIN_INFO WHERE train_number = 'TRN003';
+    FOR day IN (SELECT sch_id FROM CRS_DAY_SCHEDULE WHERE is_week_end = 'Y') LOOP
+        INSERT INTO CRS_TRAIN_SCHEDULE VALUES (seq_tsch_id.NEXTVAL, day.sch_id, v_train_id, 'Y');
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('TRN003 scheduled for weekends only');
+END;
+/
