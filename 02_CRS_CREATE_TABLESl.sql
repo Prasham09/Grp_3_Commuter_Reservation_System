@@ -83,3 +83,24 @@ CREATE TABLE CRS_TRAIN_SCHEDULE (
 );
 
 PROMPT 'CRS_TRAIN_SCHEDULE created';
+
+-- ============================================
+-- TABLE 4: CRS_PASSENGER
+-- ============================================
+CREATE TABLE CRS_PASSENGER (
+    passenger_id NUMBER PRIMARY KEY,
+    first_name VARCHAR2(50) NOT NULL,
+    middle_name VARCHAR2(50),
+    last_name VARCHAR2(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    address_line1 VARCHAR2(200) NOT NULL,
+    address_city VARCHAR2(100) NOT NULL,
+    address_state VARCHAR2(50) NOT NULL,
+    address_zip VARCHAR2(10) NOT NULL,
+    email VARCHAR2(100) NOT NULL UNIQUE,
+    phone VARCHAR2(15) NOT NULL UNIQUE,
+    created_date DATE DEFAULT SYSDATE,
+    CONSTRAINT chk_pass_email CHECK (REGEXP_LIKE(email, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'))
+);
+
+PROMPT 'CRS_PASSENGER created';
