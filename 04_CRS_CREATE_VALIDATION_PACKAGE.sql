@@ -194,5 +194,33 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN FALSE;
     END is_seat_class_valid;
     
+    -- ========================================
+    -- FUNCTION: get_total_seats
+    -- Returns total seats for given class
+    -- ========================================
+    FUNCTION get_total_seats(
+        p_train_id IN NUMBER,
+        p_seat_class IN VARCHAR2
+    ) RETURN NUMBER IS
+        v_total_seats NUMBER;
+    BEGIN
+        IF UPPER(p_seat_class) = 'BUSINESS' THEN
+            SELECT total_fc_seats INTO v_total_seats
+            FROM CRS_TRAIN_INFO
+            WHERE train_id = p_train_id;
+        ELSE
+            SELECT total_econ_seats INTO v_total_seats
+            FROM CRS_TRAIN_INFO
+            WHERE train_id = p_train_id;
+        END IF;
+        
+        RETURN v_total_seats;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN 0;
+        WHEN OTHERS THEN
+            RETURN 0;
+    END get_total_seats;
+    
 END CRS_VALIDATION_PKG;
 /
