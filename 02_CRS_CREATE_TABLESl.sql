@@ -36,3 +36,22 @@ CREATE SEQUENCE seq_sch_id START WITH 1 INCREMENT BY 1 NOCACHE;
 CREATE SEQUENCE seq_tsch_id START WITH 1 INCREMENT BY 1 NOCACHE;
 CREATE SEQUENCE seq_passenger_id START WITH 1001 INCREMENT BY 1 NOCACHE;
 CREATE SEQUENCE seq_booking_id START WITH 5001 INCREMENT BY 1 NOCACHE;
+
+-- ============================================
+-- TABLE 1: CRS_TRAIN_INFO
+-- ============================================
+CREATE TABLE CRS_TRAIN_INFO (
+    train_id NUMBER PRIMARY KEY,
+    train_number VARCHAR2(20) NOT NULL UNIQUE,
+    source_station VARCHAR2(100) NOT NULL,
+    dest_station VARCHAR2(100) NOT NULL,
+    total_fc_seats NUMBER DEFAULT 40 NOT NULL,
+    total_econ_seats NUMBER DEFAULT 40 NOT NULL,
+    fc_seat_fare NUMBER(10,2) NOT NULL,
+    econ_seat_fare NUMBER(10,2) NOT NULL,
+    CONSTRAINT chk_train_seats CHECK (total_fc_seats > 0 AND total_econ_seats > 0),
+    CONSTRAINT chk_train_fare CHECK (fc_seat_fare > 0 AND econ_seat_fare > 0),
+    CONSTRAINT chk_train_stations CHECK (source_station != dest_station)
+);
+
+PROMPT 'CRS_TRAIN_INFO created';
