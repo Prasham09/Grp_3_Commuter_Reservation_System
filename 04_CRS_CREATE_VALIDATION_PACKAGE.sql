@@ -284,5 +284,35 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
             RETURN 0;
     END get_waitlist_count;
     
+    -- ========================================
+    -- FUNCTION: is_email_unique
+    -- Checks if email is unique
+    -- Business Rule: Email must be unique
+    -- ========================================
+    FUNCTION is_email_unique(
+        p_email IN VARCHAR2,
+        p_passenger_id IN NUMBER DEFAULT NULL
+    ) RETURN BOOLEAN IS
+        v_count NUMBER;
+    BEGIN
+        IF p_passenger_id IS NULL THEN
+            SELECT COUNT(*)
+            INTO v_count
+            FROM CRS_PASSENGER
+            WHERE LOWER(email) = LOWER(p_email);
+        ELSE
+            SELECT COUNT(*)
+            INTO v_count
+            FROM CRS_PASSENGER
+            WHERE LOWER(email) = LOWER(p_email)
+            AND passenger_id != p_passenger_id;
+        END IF;
+        
+        RETURN (v_count = 0);
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN FALSE;
+    END is_email_unique;
+    
 END CRS_VALIDATION_PKG;
 /
