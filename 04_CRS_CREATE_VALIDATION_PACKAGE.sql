@@ -245,7 +245,8 @@ CREATE OR REPLACE PACKAGE BODY CRS_VALIDATION_PKG AS
         FROM CRS_RESERVATION
         WHERE train_id = p_train_id
         AND travel_date = p_travel_date
-        AND UPPER(seat_class) = UPPER(p_seat_class);
+        AND UPPER(seat_class) = UPPER(p_seat_class)
+        AND seat_status = 'CONFIRMED';
         
         v_available_seats := v_total_seats - v_booked_seats;
         
