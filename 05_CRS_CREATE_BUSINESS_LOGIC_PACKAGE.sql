@@ -71,3 +71,13 @@ CREATE OR REPLACE PACKAGE CRS_BOOKING_PKG AS
     
 END CRS_BOOKING_PKG;
 /
+PROMPT 'Package specification created';
+
+-- ============================================
+-- PACKAGE BODY
+-- ============================================
+CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
+
+
+END CRS_BOOKING_PKG;
+/
