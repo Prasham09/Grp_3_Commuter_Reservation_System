@@ -1,0 +1,4 @@
+-- ============================================
+-- SCRIPT 4: CREATE_VALIDATION_PACKAGE.sql
+-- Connect as CRS_ADMIN and run this script
+-- ============================================
