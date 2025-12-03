@@ -15,18 +15,18 @@ PROMPT 'Cleaning up...';
 
 -- 1. Clear ALL reservations
 DELETE FROM CRS_RESERVATION;
-DBMS_OUTPUT.PUT_LINE('✓ Deleted all reservations');
+--DBMS_OUTPUT.PUT_LINE('✓ Deleted all reservations');
 
 -- 2. Delete ONLY test passengers (the Alice ones with .test. in email)
 DELETE FROM CRS_PASSENGER 
 WHERE email LIKE '%.test.%@%';
 
-DBMS_OUTPUT.PUT_LINE('✓ Deleted test passengers: ' || SQL%ROWCOUNT || ' removed');
+--DBMS_OUTPUT.PUT_LINE('✓ Deleted test passengers: ' || SQL%ROWCOUNT || ' removed');
 
 -- 3. Reset booking sequence
 DROP SEQUENCE seq_booking_id;
 CREATE SEQUENCE seq_booking_id START WITH 5001 INCREMENT BY 1 NOCACHE;
-DBMS_OUTPUT.PUT_LINE('✓ Reset booking sequence to 5001');
+--DBMS_OUTPUT.PUT_LINE('✓ Reset booking sequence to 5001');
 
 COMMIT;
 
