@@ -1,0 +1,60 @@
+-- ============================================
+-- SCRIPT 8: TEST_CASES.sql (FINAL)
+-- ⚠️ RUN AS CRS_OPERATOR ⚠️
+-- Matches your actual passengers: 1001-1026
+-- ============================================
+
+SET SERVEROUTPUT ON SIZE UNLIMITED;
+
+-- Verify you're connected as CRS_OPERATOR
+SHOW USER;
+
+DECLARE
+    v_passenger_id NUMBER;
+    v_booking_id NUMBER;
+    v_status VARCHAR2(500);
+    v_seat_status VARCHAR2(20);
+    v_waitlist_pos NUMBER;
+    v_test_count NUMBER := 0;
+    v_pass_count NUMBER := 0;
+    v_timestamp VARCHAR2(20) := TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS');
+    v_first_booking_id NUMBER;
+    v_passenger_index NUMBER := 1;
+    
+    -- YOUR ACTUAL 26 passengers (NO GAPS)
+    TYPE passenger_array IS VARRAY(26) OF NUMBER;
+    v_passengers passenger_array := passenger_array(
+        1001, 1002, 1003, 1004, 1005, 1006,
+        1007, 1008, 1009, 1010, 1011, 1012,
+        1013, 1014, 1015, 1016, 1017, 1018,
+        1019, 1020, 1021, 1022, 1023, 1024,
+        1025, 1026
+    );
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    DBMS_OUTPUT.PUT_LINE('COMMUTER RESERVATION SYSTEM');
+    DBMS_OUTPUT.PUT_LINE('COMPREHENSIVE TEST SUITE');
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    DBMS_OUTPUT.PUT_LINE('Run Time: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+    DBMS_OUTPUT.PUT_LINE('');
+
+    -- SUMMARY
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    DBMS_OUTPUT.PUT_LINE('TEST SUITE SUMMARY');
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    DBMS_OUTPUT.PUT_LINE('Total Tests: ' || v_test_count);
+    DBMS_OUTPUT.PUT_LINE('Tests Passed: ' || v_pass_count);
+    DBMS_OUTPUT.PUT_LINE('Tests Failed: ' || (v_test_count - v_pass_count));
+    DBMS_OUTPUT.PUT_LINE('Success Rate: ' || ROUND((v_pass_count / v_test_count) * 100, 2) || '%');
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    
+    IF v_pass_count = v_test_count THEN
+        DBMS_OUTPUT.PUT_LINE('ALL TESTS PASSED!');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('' || (v_test_count - v_pass_count) || ' TEST(S) FAILED');
+    END IF;
+    
+    DBMS_OUTPUT.PUT_LINE('========================================');
+    
+END;
+/
