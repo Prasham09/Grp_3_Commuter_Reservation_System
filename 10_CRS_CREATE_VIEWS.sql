@@ -10,6 +10,9 @@ SET SERVEROUTPUT ON SIZE UNLIMITED;
 BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_passenger_bookings'; EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 
+BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_active_reservations'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+
 
 -- ============================================
 -- VIEW 1: Passenger Bookings (All Details)
@@ -46,8 +49,32 @@ JOIN CRS_TRAIN_INFO t ON r.train_id = t.train_id;
 
 PROMPT 'View created: vw_passenger_bookings';
 
+-- ============================================
+-- VIEW 2: Active Reservations Only
+-- Shows only CONFIRMED and WAITLISTED bookings
+-- ============================================
+CREATE OR REPLACE VIEW vw_active_reservations AS
+SELECT 
+    booking_id,
+    passenger_id,
+    passenger_name,
+    email,
+    train_number,
+    source_station || ' → ' || dest_station AS route,
+    travel_date,
+    seat_class,
+    fare_amount,
+    seat_status,
+    waitlist_position
+FROM vw_passenger_bookings
+WHERE seat_status IN ('CONFIRMED', 'WAITLISTED')
+ORDER BY travel_date, train_number, seat_status, waitlist_position;
+
+PROMPT 'View created: vw_active_reservations';
+
 
 -- ============================================
 -- Grant SELECT on views to CRS_OPERATOR
 -- ============================================
 GRANT SELECT ON vw_passenger_bookings TO CRS_OPERATOR;
+GRANT SELECT ON vw_active_reservations TO CRS_OPERATOR;
