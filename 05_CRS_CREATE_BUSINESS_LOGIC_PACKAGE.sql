@@ -353,5 +353,37 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
             p_status := 'ERROR: Cancellation failed - ' || SQLERRM;
     END cancel_ticket;
     
+    FUNCTION get_booking_details(p_booking_id IN NUMBER) 
+        RETURN SYS_REFCURSOR IS
+        v_cursor SYS_REFCURSOR;
+    BEGIN
+        OPEN v_cursor FOR
+            SELECT 
+                r.booking_id,
+                r.booking_date,
+                r.travel_date,
+                p.first_name || ' ' || NVL(p.middle_name || ' ', '') || p.last_name AS passenger_name,
+                p.email,
+                p.phone,
+                t.train_number,
+                t.source_station,
+                t.dest_station,
+                r.seat_class,
+                CASE r.seat_class
+                    WHEN 'BUSINESS' THEN t.fc_seat_fare
+                    ELSE t.econ_seat_fare
+                END AS fare,
+                r.seat_status,
+                r.waitlist_position,
+                CRS_VALIDATION_PKG.get_passenger_category(p.date_of_birth) AS passenger_category
+            FROM CRS_RESERVATION r
+            JOIN CRS_PASSENGER p ON r.passenger_id = p.passenger_id
+            JOIN CRS_TRAIN_INFO t ON r.train_id = t.train_id
+            WHERE r.booking_id = p_booking_id;
+            
+        RETURN v_cursor;
+    END get_booking_details;
+    
+
 END CRS_BOOKING_PKG;
 /
