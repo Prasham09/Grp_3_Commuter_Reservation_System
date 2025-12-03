@@ -261,6 +261,97 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
             p_status := 'ERROR: Booking failed - ' || SQLERRM;
     END book_ticket;
     
+    PROCEDURE cancel_ticket(
+        p_booking_id IN NUMBER,
+        p_status OUT VARCHAR2
+    ) IS
+        PRAGMA AUTONOMOUS_TRANSACTION;  -- ← THIS LINE FIXES ORA-12839! -- occurs when an attempt is made to perform a parallel modification on a table within the same transaction
+        
+        v_train_id NUMBER;
+        v_travel_date DATE;
+        v_seat_class VARCHAR2(10);
+        v_current_status VARCHAR2(20);
+        v_first_waitlist_id NUMBER := NULL;
+        
+        TYPE booking_list IS TABLE OF NUMBER;
+        v_waitlist_bookings booking_list;
+    BEGIN
+        BEGIN
+            SELECT train_id, travel_date, seat_class, seat_status
+            INTO v_train_id, v_travel_date, v_seat_class, v_current_status
+            FROM CRS_RESERVATION
+            WHERE booking_id = p_booking_id
+            FOR UPDATE;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                ROLLBACK;
+                p_status := 'ERROR: Booking ID ' || p_booking_id || ' not found in system';
+                RETURN;
+        END;
+        
+        IF v_current_status = 'CANCELLED' THEN
+            ROLLBACK;
+            p_status := 'ERROR: Booking ID ' || p_booking_id || ' is already cancelled';
+            RETURN;
+        END IF;
+        
+        UPDATE CRS_RESERVATION
+        SET seat_status = 'CANCELLED',
+            waitlist_position = NULL
+        WHERE booking_id = p_booking_id;
+        
+        IF v_current_status = 'CONFIRMED' THEN
+            SELECT booking_id
+            BULK COLLECT INTO v_waitlist_bookings
+            FROM CRS_RESERVATION
+            WHERE train_id = v_train_id
+            AND travel_date = v_travel_date
+            AND seat_class = v_seat_class
+            AND seat_status = 'WAITLISTED'
+            ORDER BY waitlist_position
+            FOR UPDATE;
+            
+            IF v_waitlist_bookings.COUNT > 0 THEN
+                v_first_waitlist_id := v_waitlist_bookings(1);
+                
+                UPDATE CRS_RESERVATION
+                SET seat_status = 'CONFIRMED',
+                    waitlist_position = NULL
+                WHERE booking_id = v_first_waitlist_id;
+                
+                FOR i IN 2..v_waitlist_bookings.COUNT LOOP
+                    UPDATE CRS_RESERVATION
+                    SET waitlist_position = i - 1
+                    WHERE booking_id = v_waitlist_bookings(i);
+                END LOOP;
+                
+                COMMIT;
+                
+                p_status := 'SUCCESS: Booking ID ' || p_booking_id || ' cancelled successfully. ' ||
+                           'Booking ID ' || v_first_waitlist_id || ' promoted from waitlist to CONFIRMED';
+            ELSE
+                COMMIT;
+                p_status := 'SUCCESS: Booking ID ' || p_booking_id || ' cancelled successfully';
+            END IF;
+        ELSE
+            UPDATE CRS_RESERVATION
+            SET waitlist_position = waitlist_position - 1
+            WHERE train_id = v_train_id
+            AND travel_date = v_travel_date
+            AND seat_class = v_seat_class
+            AND seat_status = 'WAITLISTED'
+            AND booking_id != p_booking_id;
+            
+            COMMIT;
+            
+            p_status := 'SUCCESS: Waitlisted booking ID ' || p_booking_id || ' cancelled successfully';
+        END IF;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            p_status := 'ERROR: Cancellation failed - ' || SQLERRM;
+    END cancel_ticket;
     
 END CRS_BOOKING_PKG;
 /
