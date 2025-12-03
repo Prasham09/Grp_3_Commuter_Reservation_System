@@ -292,6 +292,20 @@ BEGIN
     END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    -- TEST 13
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Cancel Already Cancelled (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    IF v_first_booking_id IS NOT NULL THEN
+        CRS_ADMIN.CRS_BOOKING_PKG.cancel_ticket(
+            p_booking_id => v_first_booking_id,
+            p_status => v_status
+        );
+        DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+        IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
