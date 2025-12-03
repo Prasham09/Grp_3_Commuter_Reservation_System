@@ -12,7 +12,10 @@ BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_passenger_bookings'; EXCEPTION WHEN OTHERS
 
 BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_active_reservations'; EXCEPTION WHEN OTHERS THEN NULL; END;
 /
-
+BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_train_occupancy'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+BEGIN EXECUTE IMMEDIATE 'DROP VIEW vw_waitlist_status'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
 
 -- ============================================
 -- VIEW 1: Passenger Bookings (All Details)
