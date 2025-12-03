@@ -407,6 +407,38 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
         RETURN v_cursor;
     END get_passenger_bookings;
     
+    PROCEDURE view_train_schedule(
+        p_train_number IN VARCHAR2,
+        p_result OUT SYS_REFCURSOR
+    ) IS
+    BEGIN
+        OPEN p_result FOR
+            SELECT 
+                t.train_number,
+                t.source_station,
+                t.dest_station,
+                ds.day_of_week,
+                ds.is_week_end,
+                ts.is_in_service,
+                t.total_fc_seats AS business_seats,
+                t.total_econ_seats AS economy_seats,
+                t.fc_seat_fare AS business_fare,
+                t.econ_seat_fare AS economy_fare
+            FROM CRS_TRAIN_INFO t
+            JOIN CRS_TRAIN_SCHEDULE ts ON t.train_id = ts.train_id
+            JOIN CRS_DAY_SCHEDULE ds ON ts.sch_id = ds.sch_id
+            WHERE t.train_number = p_train_number
+            ORDER BY 
+                CASE ds.day_of_week
+                    WHEN 'MONDAY' THEN 1
+                    WHEN 'TUESDAY' THEN 2
+                    WHEN 'WEDNESDAY' THEN 3
+                    WHEN 'THURSDAY' THEN 4
+                    WHEN 'FRIDAY' THEN 5
+                    WHEN 'SATURDAY' THEN 6
+                    WHEN 'SUNDAY' THEN 7
+                END;
+    END view_train_schedule;
     
 END CRS_BOOKING_PKG;
 /
