@@ -259,6 +259,24 @@ BEGIN
     v_pass_count := v_pass_count + 1;
     DBMS_OUTPUT.PUT_LINE('');
     
+    -- TEST 11
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book After Full Capacity (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1025,
+        p_train_id => 4,
+        p_travel_date => TRUNC(SYSDATE) + 5,
+        p_seat_class => 'BUSINESS',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
