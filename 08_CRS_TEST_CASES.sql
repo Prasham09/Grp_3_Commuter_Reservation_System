@@ -180,6 +180,24 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    -- TEST 8
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Beyond 7 Days (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1015,
+        p_train_id => 1,
+        p_travel_date => TRUNC(SYSDATE) + 10,
+        p_seat_class => 'ECONOMY',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
     DBMS_OUTPUT.PUT_LINE('TEST SUITE SUMMARY');
