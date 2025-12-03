@@ -384,6 +384,29 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
         RETURN v_cursor;
     END get_booking_details;
     
-
+    FUNCTION get_passenger_bookings(p_passenger_id IN NUMBER) 
+        RETURN SYS_REFCURSOR IS
+        v_cursor SYS_REFCURSOR;
+    BEGIN
+        OPEN v_cursor FOR
+            SELECT 
+                r.booking_id,
+                r.booking_date,
+                r.travel_date,
+                t.train_number,
+                t.source_station,
+                t.dest_station,
+                r.seat_class,
+                r.seat_status,
+                r.waitlist_position
+            FROM CRS_RESERVATION r
+            JOIN CRS_TRAIN_INFO t ON r.train_id = t.train_id
+            WHERE r.passenger_id = p_passenger_id
+            ORDER BY r.booking_date DESC;
+            
+        RETURN v_cursor;
+    END get_passenger_bookings;
+    
+    
 END CRS_BOOKING_PKG;
 /
