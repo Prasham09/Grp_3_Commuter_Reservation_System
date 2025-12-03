@@ -75,6 +75,64 @@ ORDER BY travel_date, train_number, seat_status, waitlist_position;
 
 PROMPT 'View created: vw_active_reservations';
 
+-- ============================================
+-- VIEW 3: Train Occupancy Summary
+-- Shows seat utilization by train, date, and class
+-- ============================================
+CREATE OR REPLACE VIEW vw_train_occupancy AS
+SELECT 
+    t.train_id,
+    t.train_number,
+    t.source_station || ' → ' || t.dest_station AS route,
+    r.travel_date,
+    r.seat_class,
+    CASE r.seat_class
+        WHEN 'BUSINESS' THEN t.total_fc_seats
+        ELSE t.total_econ_seats
+    END AS total_capacity,
+    COUNT(CASE WHEN r.seat_status = 'CONFIRMED' THEN 1 END) AS confirmed,
+    COUNT(CASE WHEN r.seat_status = 'WAITLISTED' THEN 1 END) AS waitlisted,
+    COUNT(CASE WHEN r.seat_status = 'CANCELLED' THEN 1 END) AS cancelled,
+    CASE r.seat_class
+        WHEN 'BUSINESS' THEN t.total_fc_seats
+        ELSE t.total_econ_seats
+    END - COUNT(CASE WHEN r.seat_status = 'CONFIRMED' THEN 1 END) AS available,
+    ROUND(
+        (COUNT(CASE WHEN r.seat_status = 'CONFIRMED' THEN 1 END) / 
+         CASE r.seat_class WHEN 'BUSINESS' THEN t.total_fc_seats ELSE t.total_econ_seats END) * 100, 
+        2
+    ) AS occupancy_percent
+FROM CRS_TRAIN_INFO t
+LEFT JOIN CRS_RESERVATION r ON t.train_id = r.train_id
+WHERE r.travel_date IS NOT NULL
+GROUP BY t.train_id, t.train_number, t.source_station, t.dest_station, 
+         r.travel_date, r.seat_class, t.total_fc_seats, t.total_econ_seats
+ORDER BY r.travel_date, t.train_number, r.seat_class;
+
+PROMPT 'View created: vw_train_occupancy';
+
+-- ============================================
+-- VIEW 4: Waitlist Status
+-- Shows all waitlisted passengers
+-- ============================================
+CREATE OR REPLACE VIEW vw_waitlist_status AS
+SELECT 
+    booking_id,
+    passenger_name,
+    email,
+    phone,
+    train_number,
+    source_station || ' → ' || dest_station AS route,
+    travel_date,
+    seat_class,
+    waitlist_position,
+    booking_date,
+    TRUNC(travel_date - SYSDATE) AS days_until_travel
+FROM vw_passenger_bookings
+WHERE seat_status = 'WAITLISTED'
+ORDER BY travel_date, train_number, seat_class, waitlist_position;
+
+PROMPT 'View created: vw_waitlist_status';
 
 -- ============================================
 -- Grant SELECT on views to CRS_OPERATOR
