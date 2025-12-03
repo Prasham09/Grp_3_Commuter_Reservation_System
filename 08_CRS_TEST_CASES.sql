@@ -60,6 +60,80 @@ BEGIN
     IF v_status LIKE 'SUCCESS%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Register MINOR Passenger
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register MINOR Passenger (Age < 18)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.register_passenger(
+        p_first_name => 'Tommy',
+        p_middle_name => NULL,
+        p_last_name => 'MinorTest',
+        p_dob => TO_DATE('2010-05-15', 'YYYY-MM-DD'),
+        p_address_line1 => '200 Youth Ave',
+        p_address_city => 'Boston',
+        p_address_state => 'MA',
+        p_address_zip => '02116',
+        p_email => 'tommy.minor.' || v_timestamp || '@email.com',
+        p_phone => '617666' || SUBSTR(v_timestamp, -4),
+        p_passenger_id => v_passenger_id,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE '%MINOR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Register SENIOR Passenger
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register SENIOR Passenger (Age >= 60)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.register_passenger(
+        p_first_name => 'Dorothy',
+        p_middle_name => NULL,
+        p_last_name => 'SeniorTest',
+        p_dob => TO_DATE('1960-01-01', 'YYYY-MM-DD'),
+        p_address_line1 => '300 Elder Road',
+        p_address_city => 'Boston',
+        p_address_state => 'MA',
+        p_address_zip => '02117',
+        p_email => 'dorothy.senior.' || v_timestamp || '@email.com',
+        p_phone => '617777' || SUBSTR(v_timestamp, -4),
+        p_passenger_id => v_passenger_id,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE '%SENIOR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Register with Future DOB (Should Fail)
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register - Future Date of Birth (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.register_passenger(
+        p_first_name => 'Future',
+        p_middle_name => NULL,
+        p_last_name => 'Baby',
+        p_dob => TO_DATE('2030-01-01', 'YYYY-MM-DD'),
+        p_address_line1 => '400 Future Lane',
+        p_address_city => 'Boston',
+        p_address_state => 'MA',
+        p_address_zip => '02118',
+        p_email => 'future.baby.' || v_timestamp || '@email.com',
+        p_phone => '617888' || SUBSTR(v_timestamp, -4),
+        p_passenger_id => v_passenger_id,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     -- TEST 2
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register Passenger - Duplicate Email (Should Fail)');
