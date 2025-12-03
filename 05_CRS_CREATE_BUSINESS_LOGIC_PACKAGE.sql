@@ -468,3 +468,17 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
     END check_seat_availability;
 END CRS_BOOKING_PKG;
 /
+
+PROMPT 'Package body created successfully!';
+
+-- Verify package was created
+SELECT object_name, object_type, status
+FROM user_objects
+WHERE object_name = 'CRS_BOOKING_PKG';
+
+PROMPT '========================================';
+PROMPT 'CRS_BOOKING_PKG created successfully!';
+PROMPT 'Ready to grant permissions.';
+PROMPT '========================================';
+
+
