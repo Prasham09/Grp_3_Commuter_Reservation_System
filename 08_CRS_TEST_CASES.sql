@@ -104,6 +104,28 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+       -- TEST 4
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register Passenger - Invalid Email (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.register_passenger(
+        p_first_name => 'David',
+        p_middle_name => NULL,
+        p_last_name => 'Green',
+        p_dob => TO_DATE('1990-01-01', 'YYYY-MM-DD'),
+        p_address_line1 => '400 Test Ln',
+        p_address_city => 'Boston',
+        p_address_state => 'MA',
+        p_address_zip => '02117',
+        p_email => 'invalid-email-format',
+        p_phone => '617555' || SUBSTR(v_timestamp, -3) || '2',
+        p_passenger_id => v_passenger_id,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
     DBMS_OUTPUT.PUT_LINE('TEST SUITE SUMMARY');
