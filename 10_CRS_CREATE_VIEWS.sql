@@ -47,4 +47,7 @@ JOIN CRS_TRAIN_INFO t ON r.train_id = t.train_id;
 PROMPT 'View created: vw_passenger_bookings';
 
 
-
+-- ============================================
+-- Grant SELECT on views to CRS_OPERATOR
+-- ============================================
+GRANT SELECT ON vw_passenger_bookings TO CRS_OPERATOR;
