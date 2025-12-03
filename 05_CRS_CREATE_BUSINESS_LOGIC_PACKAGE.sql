@@ -156,6 +156,111 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
             p_status := 'ERROR: Failed to register passenger - ' || SQLERRM;
     END register_passenger;
     
+    PROCEDURE book_ticket(
+        p_passenger_id IN NUMBER,
+        p_train_id IN NUMBER,
+        p_travel_date IN DATE,
+        p_seat_class IN VARCHAR2,
+        p_booking_id OUT NUMBER,
+        p_status OUT VARCHAR2,
+        p_seat_status OUT VARCHAR2,
+        p_waitlist_position OUT NUMBER
+    ) IS
+        v_booking_id NUMBER;
+        v_available_seats NUMBER;
+        v_waitlist_count NUMBER;
+        v_seat_status VARCHAR2(20);
+        v_waitlist_pos NUMBER := NULL;
+        v_booking_date DATE := SYSDATE;
+        v_seat_class_upper VARCHAR2(10);
+    BEGIN
+        p_booking_id := NULL;
+        p_seat_status := NULL;
+        p_waitlist_position := NULL;
+        
+        v_seat_class_upper := UPPER(TRIM(p_seat_class));
+        
+        IF LENGTH(v_seat_class_upper) > 10 THEN
+            p_status := 'ERROR: Invalid seat class - Use BUSINESS or ECONOMY only';
+            RETURN;
+        END IF;
+        
+        IF NOT CRS_VALIDATION_PKG.is_passenger_valid(p_passenger_id) THEN
+            p_status := 'ERROR: Invalid passenger ID - Passenger does not exist';
+            RETURN;
+        END IF;
+        
+        IF NOT CRS_VALIDATION_PKG.is_train_valid(p_train_id) THEN
+            p_status := 'ERROR: Invalid train ID - Train does not exist';
+            RETURN;
+        END IF;
+        
+        IF NOT CRS_VALIDATION_PKG.is_seat_class_valid(v_seat_class_upper) THEN
+            p_status := 'ERROR: Invalid seat class - Use BUSINESS or ECONOMY only';
+            RETURN;
+        END IF;
+        
+        IF NOT CRS_VALIDATION_PKG.is_booking_date_valid(v_booking_date, p_travel_date) THEN
+            p_status := 'ERROR: Invalid booking date - Only 7 days advance booking allowed (travel date: ' || 
+                       TO_CHAR(p_travel_date, 'DD-MON-YYYY') || ')';
+            RETURN;
+        END IF;
+        
+        IF NOT CRS_VALIDATION_PKG.is_train_available_on_date(p_train_id, p_travel_date) THEN
+            p_status := 'ERROR: Train not available on ' || TO_CHAR(p_travel_date, 'DAY DD-MON-YYYY') || 
+                       ' - Check train schedule';
+            RETURN;
+        END IF;
+        
+        v_available_seats := CRS_VALIDATION_PKG.get_available_seats(
+            p_train_id, p_travel_date, v_seat_class_upper
+        );
+        
+        v_waitlist_count := CRS_VALIDATION_PKG.get_waitlist_count(
+            p_train_id, p_travel_date, v_seat_class_upper
+        );
+        
+        IF v_available_seats > 0 THEN
+            v_seat_status := 'CONFIRMED';
+        ELSIF v_waitlist_count < 5 THEN
+            v_seat_status := 'WAITLISTED';
+            v_waitlist_pos := v_waitlist_count + 1;
+        ELSE
+            p_status := 'ERROR: No seats available - All confirmed seats (40) and waitlist positions (5) are full for ' || 
+                       v_seat_class_upper || ' class';
+            RETURN;
+        END IF;
+        
+        v_booking_id := seq_booking_id.NEXTVAL;
+        
+        INSERT INTO CRS_RESERVATION (
+            booking_id, passenger_id, train_id, travel_date,
+            booking_date, seat_class, seat_status, waitlist_position
+        ) VALUES (
+            v_booking_id, p_passenger_id, p_train_id, p_travel_date,
+            v_booking_date, v_seat_class_upper, v_seat_status, v_waitlist_pos
+        );
+        
+        COMMIT;
+        
+        p_booking_id := v_booking_id;
+        p_seat_status := v_seat_status;
+        p_waitlist_position := v_waitlist_pos;
+        
+        IF v_seat_status = 'CONFIRMED' THEN
+            p_status := 'SUCCESS: Ticket CONFIRMED with Booking ID ' || v_booking_id || 
+                       ' for ' || v_seat_class_upper || ' class';
+        ELSE
+            p_status := 'SUCCESS: Ticket WAITLISTED (Position: ' || v_waitlist_pos || 
+                       '/5) with Booking ID ' || v_booking_id || ' for ' || v_seat_class_upper || ' class';
+        END IF;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            p_status := 'ERROR: Booking failed - ' || SQLERRM;
+    END book_ticket;
+    
     
 END CRS_BOOKING_PKG;
 /
