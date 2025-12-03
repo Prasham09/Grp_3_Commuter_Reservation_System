@@ -306,6 +306,17 @@ BEGIN
     END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    -- TEST 14
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Cancel Invalid Booking ID (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.cancel_ticket(
+        p_booking_id => 99999,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
     
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
