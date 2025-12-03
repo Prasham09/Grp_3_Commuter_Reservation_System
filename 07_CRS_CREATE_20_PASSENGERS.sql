@@ -61,6 +61,50 @@ BEGIN
     );
     IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
     
+    -- Passenger 6
+    CRS_BOOKING_PKG.register_passenger(
+        'Linda', 'Marie', 'Taylor', TO_DATE('1991-12-25', 'YYYY-MM-DD'),
+        '789 Birch Street', 'Quincy', 'MA', '02169',
+        'linda.taylor@email.com', '6171111006',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 7
+    CRS_BOOKING_PKG.register_passenger(
+        'Richard', 'John', 'Thomas', TO_DATE('2005-04-18', 'YYYY-MM-DD'),
+        '321 Walnut Avenue', 'Medford', 'MA', '02155',
+        'richard.thomas@email.com', '6171111007',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 8
+    CRS_BOOKING_PKG.register_passenger(
+        'Patricia', 'Ann', 'Jackson', TO_DATE('1968-08-07', 'YYYY-MM-DD'),
+        '654 Spruce Road', 'Waltham', 'MA', '02451',
+        'patricia.jackson@email.com', '6171111008',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 9
+    CRS_BOOKING_PKG.register_passenger(
+        'Christopher', 'James', 'White', TO_DATE('1993-02-14', 'YYYY-MM-DD'),
+        '987 Ash Drive', 'Malden', 'MA', '02148',
+        'christopher.white@email.com', '6171111009',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 10
+    CRS_BOOKING_PKG.register_passenger(
+        'Barbara', 'Jean', 'Harris', TO_DATE('1987-10-29', 'YYYY-MM-DD'),
+        '147 Willow Lane', 'Revere', 'MA', '02151',
+        'barbara.harris@email.com', '6171111010',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
     
     COMMIT;
     
