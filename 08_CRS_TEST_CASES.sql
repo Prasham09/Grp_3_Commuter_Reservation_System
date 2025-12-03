@@ -38,6 +38,29 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Run Time: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
     DBMS_OUTPUT.PUT_LINE('');
 
+    -- TEST 1
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register New Passenger - Valid Data');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.register_passenger(
+        p_first_name => 'Alice',
+        p_middle_name => 'Marie',
+        p_last_name => 'TestUser',
+        p_dob => TO_DATE('1992-06-15', 'YYYY-MM-DD'),
+        p_address_line1 => '100 Test Street',
+        p_address_city => 'Boston',
+        p_address_state => 'MA',
+        p_address_zip => '02115',
+        p_email => 'alice.test.' || v_timestamp || '@email.com',
+        p_phone => '617555' || SUBSTR(v_timestamp, -4),
+        p_passenger_id => v_passenger_id,
+        p_status => v_status
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'SUCCESS%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
     DBMS_OUTPUT.PUT_LINE('TEST SUITE SUMMARY');
