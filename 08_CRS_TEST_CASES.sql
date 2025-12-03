@@ -216,6 +216,49 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    -- TEST 10
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book 45 Tickets - Waitlist Logic');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Booking 45 BUSINESS tickets using 26 passengers...');
+    
+    v_first_booking_id := NULL;
+    v_passenger_index := 1;
+    
+    FOR i IN 1..45 LOOP
+        v_passenger_id := v_passengers(v_passenger_index);
+        
+        CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+            p_passenger_id => v_passenger_id,
+            p_train_id => 4,
+            p_travel_date => TRUNC(SYSDATE) + 5,
+            p_seat_class => 'BUSINESS',
+            p_booking_id => v_booking_id,
+            p_status => v_status,
+            p_seat_status => v_seat_status,
+            p_waitlist_position => v_waitlist_pos
+        );
+        
+        IF i = 1 THEN
+            v_first_booking_id := v_booking_id;
+        END IF;
+        
+        IF i IN (1, 20, 26, 39, 40, 41, 42, 43, 44, 45) THEN
+            DBMS_OUTPUT.PUT_LINE('  #' || LPAD(i, 2, '0') || ' (PASSENGER_ID ' || v_passenger_id || '): ' || 
+                RPAD(NVL(v_seat_status, 'ERROR'), 11) || 
+                CASE WHEN v_waitlist_pos IS NOT NULL THEN ' (WL: ' || v_waitlist_pos || ')' ELSE '' END);
+        END IF;
+        
+        v_passenger_index := v_passenger_index + 1;
+        IF v_passenger_index > 26 THEN
+            v_passenger_index := 1;
+        END IF;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('Expected: #1-40 CONFIRMED, #41-45 WAITLISTED');
+    v_pass_count := v_pass_count + 1;
+    DBMS_OUTPUT.PUT_LINE('');
+    
     
     -- SUMMARY
     DBMS_OUTPUT.PUT_LINE('========================================');
