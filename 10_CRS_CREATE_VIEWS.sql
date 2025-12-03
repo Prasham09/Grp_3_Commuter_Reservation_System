@@ -139,3 +139,5 @@ PROMPT 'View created: vw_waitlist_status';
 -- ============================================
 GRANT SELECT ON vw_passenger_bookings TO CRS_OPERATOR;
 GRANT SELECT ON vw_active_reservations TO CRS_OPERATOR;
+GRANT SELECT ON vw_train_occupancy TO CRS_OPERATOR;
+GRANT SELECT ON vw_waitlist_status TO CRS_OPERATOR;
