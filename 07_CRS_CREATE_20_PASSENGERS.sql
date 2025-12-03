@@ -106,6 +106,51 @@ BEGIN
     );
     IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
     
+     -- Passenger 11
+    CRS_BOOKING_PKG.register_passenger(
+        'Daniel', 'Patrick', 'Martin', TO_DATE('1996-06-03', 'YYYY-MM-DD'),
+        '258 Hickory Street', 'Chelsea', 'MA', '02150',
+        'daniel.martin@email.com', '6171111011',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 12
+    CRS_BOOKING_PKG.register_passenger(
+        'Susan', 'Elizabeth', 'Thompson', TO_DATE('1979-01-16', 'YYYY-MM-DD'),
+        '369 Poplar Avenue', 'Everett', 'MA', '02149',
+        'susan.thompson@email.com', '6171111012',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 13
+    CRS_BOOKING_PKG.register_passenger(
+        'Matthew', 'David', 'Moore', TO_DATE('2000-11-21', 'YYYY-MM-DD'),
+        '741 Magnolia Road', 'Arlington', 'MA', '02474',
+        'matthew.moore@email.com', '6171111013',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 14
+    CRS_BOOKING_PKG.register_passenger(
+        'Jessica', 'Nicole', 'Lee', TO_DATE('1984-07-09', 'YYYY-MM-DD'),
+        '852 Sycamore Drive', 'Belmont', 'MA', '02478',
+        'jessica.lee@email.com', '6171111014',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
+    -- Passenger 15
+    CRS_BOOKING_PKG.register_passenger(
+        'Anthony', 'Michael', 'Walker', TO_DATE('1990-03-27', 'YYYY-MM-DD'),
+        '963 Chestnut Lane', 'Watertown', 'MA', '02472',
+        'anthony.walker@email.com', '6171111015',
+        v_passenger_id, v_status
+    );
+    IF v_status LIKE 'SUCCESS%' THEN v_count := v_count + 1; END IF;
+    
     COMMIT;
     
     DBMS_OUTPUT.PUT_LINE('========================================');
