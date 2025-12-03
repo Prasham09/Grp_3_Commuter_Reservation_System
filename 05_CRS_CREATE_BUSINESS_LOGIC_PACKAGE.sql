@@ -440,5 +440,31 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
                 END;
     END view_train_schedule;
     
+    FUNCTION check_seat_availability(
+        p_train_id IN NUMBER,
+        p_travel_date IN DATE,
+        p_seat_class IN VARCHAR2
+    ) RETURN VARCHAR2 IS
+        v_available NUMBER;
+        v_waitlist NUMBER;
+        v_total NUMBER;
+        v_message VARCHAR2(500);
+    BEGIN
+        v_total := CRS_VALIDATION_PKG.get_total_seats(p_train_id, p_seat_class);
+        v_available := CRS_VALIDATION_PKG.get_available_seats(
+            p_train_id, p_travel_date, p_seat_class
+        );
+        v_waitlist := CRS_VALIDATION_PKG.get_waitlist_count(
+            p_train_id, p_travel_date, p_seat_class
+        );
+        
+        v_message := UPPER(p_seat_class) || ' Class - ' ||
+                    'Total: ' || v_total || ', ' ||
+                    'Available: ' || v_available || ', ' ||
+                    'Booked: ' || (v_total - v_available) || ', ' ||
+                    'Waitlist: ' || v_waitlist || '/5';
+        
+        RETURN v_message;
+    END check_seat_availability;
 END CRS_BOOKING_PKG;
 /
