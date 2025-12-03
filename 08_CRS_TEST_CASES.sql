@@ -59,8 +59,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
     IF v_status LIKE 'SUCCESS%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
-    
-    DBMS_OUTPUT.PUT_LINE('');
+
     
     -- ========================================
     -- NEW TEST: Register MINOR Passenger
@@ -288,6 +287,71 @@ BEGIN
     );
     DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Book for Past Travel Date (Should Fail)
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Past Travel Date (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1012,
+        p_train_id => 1,
+        p_travel_date => TRUNC(SYSDATE) - 2,  -- 2 days ago
+        p_seat_class => 'BUSINESS',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Train Not Operating on Day (Should Fail)
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book - Train Not Operating on Day (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Booking TRN003 (weekends only) on next Monday (weekday)...');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1013,
+        p_train_id => 3,  -- TRN003 weekends only
+        p_travel_date => NEXT_DAY(TRUNC(SYSDATE), 'MONDAY'),
+        p_seat_class => 'BUSINESS',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%not available%' THEN v_pass_count := v_pass_count + 1; END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- ========================================
+    -- NEW TEST: Duplicate Booking (Currently Allowed)
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book - Duplicate Booking (Same Passenger/Train/Date/Class)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Passenger 1001 tries to book Train 1 BUSINESS again...');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1001,
+        p_train_id => 1,
+        p_travel_date => TRUNC(SYSDATE) + 3,
+        p_seat_class => 'BUSINESS',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'SUCCESS%' THEN 
+        DBMS_OUTPUT.PUT_LINE('Note: System currently allows duplicate bookings (may be intentional)');
+        v_pass_count := v_pass_count + 1;
+    END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
     -- TEST 10

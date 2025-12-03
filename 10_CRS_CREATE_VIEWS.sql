@@ -50,7 +50,7 @@ FROM CRS_RESERVATION r
 JOIN CRS_PASSENGER p ON r.passenger_id = p.passenger_id
 JOIN CRS_TRAIN_INFO t ON r.train_id = t.train_id;
 
-PROMPT 'View created: vw_passenger_bookings';
+--PROMPT 'View created: vw_passenger_bookings';
 
 -- ============================================
 -- VIEW 2: Active Reservations Only
@@ -73,7 +73,7 @@ FROM vw_passenger_bookings
 WHERE seat_status IN ('CONFIRMED', 'WAITLISTED')
 ORDER BY travel_date, train_number, seat_status, waitlist_position;
 
-PROMPT 'View created: vw_active_reservations';
+--PROMPT 'View created: vw_active_reservations';
 
 -- ============================================
 -- VIEW 3: Train Occupancy Summary
@@ -109,7 +109,7 @@ GROUP BY t.train_id, t.train_number, t.source_station, t.dest_station,
          r.travel_date, r.seat_class, t.total_fc_seats, t.total_econ_seats
 ORDER BY r.travel_date, t.train_number, r.seat_class;
 
-PROMPT 'View created: vw_train_occupancy';
+--PROMPT 'View created: vw_train_occupancy';
 
 -- ============================================
 -- VIEW 4: Waitlist Status
@@ -132,7 +132,7 @@ FROM vw_passenger_bookings
 WHERE seat_status = 'WAITLISTED'
 ORDER BY travel_date, train_number, seat_class, waitlist_position;
 
-PROMPT 'View created: vw_waitlist_status';
+--PROMPT 'View created: vw_waitlist_status';
 
 -- ============================================
 -- Grant SELECT on views to CRS_OPERATOR
