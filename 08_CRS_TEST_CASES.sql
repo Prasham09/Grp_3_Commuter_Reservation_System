@@ -289,6 +289,31 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
+    
+    -- ========================================
+    -- NEW TEST: Minor Tries to Book (Should Fail)
+    -- ========================================
+    v_test_count := v_test_count + 1;
+    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Minor Tries to Book Ticket (Should Fail)');
+    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Passenger 1003 (Michael Williams - Age 14) tries to book...');
+    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
+        p_passenger_id => 1003,  -- Michael Williams (10-MAR-2010, age 14)
+        p_train_id => 1,
+        p_travel_date => TRUNC(SYSDATE) + 3,
+        p_seat_class => 'ECONOMY',
+        p_booking_id => v_booking_id,
+        p_status => v_status,
+        p_seat_status => v_seat_status,
+        p_waitlist_position => v_waitlist_pos
+    );
+    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
+    IF v_status LIKE 'ERROR%Minors%' THEN 
+        DBMS_OUTPUT.PUT_LINE('✓ Correctly blocked minor from booking');
+        v_pass_count := v_pass_count + 1;
+    END IF;
+    DBMS_OUTPUT.PUT_LINE('');
+
     -- ========================================
     -- NEW TEST: Book for Past Travel Date (Should Fail)
     -- ========================================
@@ -358,13 +383,23 @@ BEGIN
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book 45 Tickets - Waitlist Logic');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
-    DBMS_OUTPUT.PUT_LINE('Booking 45 BUSINESS tickets using 26 passengers...');
+    DBMS_OUTPUT.PUT_LINE('Booking 45 BUSINESS tickets using ADULT passengers only...');
     
     v_first_booking_id := NULL;
     v_passenger_index := 1;
     
     FOR i IN 1..45 LOOP
+        -- Skip minors (1003 and 1006)
         v_passenger_id := v_passengers(v_passenger_index);
+        
+        -- Skip to next if current passenger is a minor
+        WHILE v_passenger_id IN (1003, 1006) LOOP
+            v_passenger_index := v_passenger_index + 1;
+            IF v_passenger_index > 26 THEN
+                v_passenger_index := 1;
+            END IF;
+            v_passenger_id := v_passengers(v_passenger_index);
+        END LOOP;
         
         CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
             p_passenger_id => v_passenger_id,
@@ -394,6 +429,7 @@ BEGIN
     END LOOP;
     
     DBMS_OUTPUT.PUT_LINE('Expected: #1-40 CONFIRMED, #41-45 WAITLISTED');
+    DBMS_OUTPUT.PUT_LINE('Note: Minors (1003, 1006) excluded from booking');
     v_pass_count := v_pass_count + 1;
     DBMS_OUTPUT.PUT_LINE('');
     
