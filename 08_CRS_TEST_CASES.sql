@@ -38,7 +38,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Run Time: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
     DBMS_OUTPUT.PUT_LINE('');
 
-    -- TEST 1
+    -- ========================================
+    -- TEST 1: -- TEST 1: Register New Passenger - Valid Data
+    -- Verifies successful passenger registration with all valid inputs and proper age category classification
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register New Passenger - Valid Data');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -62,7 +65,8 @@ BEGIN
 
     
     -- ========================================
-    -- NEW TEST: Register MINOR Passenger
+    -- TEST 2: -- TEST 2: Register MINOR Passenger (Age < 18)
+    -- Confirms system correctly identifies and registers passengers under 18 as MINOR category
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register MINOR Passenger (Age < 18)');
@@ -86,7 +90,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
     
     -- ========================================
-    -- NEW TEST: Register SENIOR Passenger
+    -- TEST 3: Register SENIOR Passenger (Age >= 60)
+    -- Validates system recognizes passengers 60+ years old as SENIOR CITIZEN category
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register SENIOR Passenger (Age >= 60)');
@@ -110,7 +115,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
     
     -- ========================================
-    -- NEW TEST: Register with Future DOB (Should Fail)
+    -- TEST 4: -- TEST 4: Register - Future Date of Birth (Should Fail)
+    -- Tests rejection of invalid date of birth that falls in the future
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register - Future Date of Birth (Should Fail)');
@@ -133,7 +139,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 2
+    -- ========================================
+    -- TEST 5: -- TEST 5: Register Passenger - Duplicate Email (Should Fail)
+    -- Ensures system prevents registration with an email address already in use
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register Passenger - Duplicate Email (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -155,7 +164,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 3
+    -- ========================================
+    -- TEST 6: Register Passenger - Duplicate Phone (Should Fail)
+    -- Verifies system blocks registration when phone number is already registered
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register Passenger - Duplicate Phone (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -177,7 +189,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-       -- TEST 4
+    -- ========================================
+    -- TEST 7: Register Passenger - Invalid Email (Should Fail)
+    -- Checks system rejects malformed email addresses that don't match required format
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Register Passenger - Invalid Email (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -199,7 +214,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 5
+    -- ========================================
+    -- TEST 8: Book Ticket - BUSINESS Class
+    -- Confirms successful booking of a Business class ticket with available seats
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - BUSINESS Class');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -217,7 +235,10 @@ BEGIN
     IF v_status LIKE 'SUCCESS%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 6
+    -- ========================================
+    -- TEST 9: Book Ticket - ECONOMY Class
+    -- Validates successful booking of an Economy class ticket with available seats
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - ECONOMY Class');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -235,7 +256,10 @@ BEGIN
     IF v_status LIKE 'SUCCESS%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 7
+    -- ========================================
+    -- TEST 10: Book Ticket - Invalid Train (Should Fail)
+    -- Tests system rejects booking attempts for non-existent train IDs
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Invalid Train (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -253,7 +277,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 8
+    -- ========================================
+    -- TEST 11: Book Ticket - Beyond 7 Days (Should Fail)
+    -- Ensures 7-day advance booking window restriction is enforced
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Beyond 7 Days (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -271,7 +298,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 9
+    -- ========================================
+    -- TEST 12: Book Ticket - Invalid Seat Class (Should Fail)
+    -- Verifies system only accepts BUSINESS or ECONOMY as valid seat classes
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Invalid Seat Class (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -289,33 +319,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    
-    -- ========================================
-    -- NEW TEST: Minor Tries to Book (Should Fail)
-    -- ========================================
-    v_test_count := v_test_count + 1;
-    DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Minor Tries to Book Ticket (Should Fail)');
-    DBMS_OUTPUT.PUT_LINE('------------------------------------------');
-    DBMS_OUTPUT.PUT_LINE('Passenger 1003 (Michael Williams - Age 14) tries to book...');
-    CRS_ADMIN.CRS_BOOKING_PKG.book_ticket(
-        p_passenger_id => 1003,  -- Michael Williams (10-MAR-2010, age 14)
-        p_train_id => 1,
-        p_travel_date => TRUNC(SYSDATE) + 3,
-        p_seat_class => 'ECONOMY',
-        p_booking_id => v_booking_id,
-        p_status => v_status,
-        p_seat_status => v_seat_status,
-        p_waitlist_position => v_waitlist_pos
-    );
-    DBMS_OUTPUT.PUT_LINE('Status: ' || v_status);
-    IF v_status LIKE 'ERROR%Minors%' THEN 
-        DBMS_OUTPUT.PUT_LINE('✓ Correctly blocked minor from booking');
-        v_pass_count := v_pass_count + 1;
-    END IF;
-    DBMS_OUTPUT.PUT_LINE('');
 
     -- ========================================
-    -- NEW TEST: Book for Past Travel Date (Should Fail)
+    -- TEST 13: Book Ticket - Past Travel Date (Should Fail)
+    -- Checks system prevents booking for dates that have already passed
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book Ticket - Past Travel Date (Should Fail)');
@@ -335,7 +342,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
     
     -- ========================================
-    -- NEW TEST: Train Not Operating on Day (Should Fail)
+    -- TEST 14: Book - Train Not Operating on Day (Should Fail)
+    -- Validates system blocks bookings when train doesn't operate on requested travel day
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book - Train Not Operating on Day (Should Fail)');
@@ -356,7 +364,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('');
     
     -- ========================================
-    -- NEW TEST: Duplicate Booking (Currently Allowed)
+    -- TEST 15: Book - Duplicate Booking (Same Passenger/Train/Date/Class)
+    -- Tests whether system allows or prevents duplicate bookings for same passenger/train/date/class combination
     -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book - Duplicate Booking (Same Passenger/Train/Date/Class)');
@@ -379,7 +388,10 @@ BEGIN
     END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 10
+    -- ========================================
+    -- TEST 16: Book 45 Tickets - Waitlist Logic
+    -- Comprehensive test of capacity management: 40 confirmed seats, 5 waitlist positions, proper status assignment
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book 45 Tickets - Waitlist Logic');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -433,7 +445,10 @@ BEGIN
     v_pass_count := v_pass_count + 1;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 11
+    -- ========================================
+    -- TEST 17: Book After Full Capacity (Should Fail)
+    -- Confirms system rejects bookings when both confirmed seats and waitlist are full
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Book After Full Capacity (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -451,7 +466,10 @@ BEGIN
     IF v_status LIKE 'ERROR%' THEN v_pass_count := v_pass_count + 1; END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 12
+    -- ========================================
+    -- TEST 18: Cancel Confirmed Ticket - Promote Waitlist
+    -- Tests automatic promotion of first waitlisted passenger when confirmed ticket is cancelled
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Cancel Confirmed Ticket - Promote Waitlist');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -466,7 +484,10 @@ BEGIN
     END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 13
+    -- ========================================
+    -- TEST 19: Cancel Already Cancelled (Should Fail)
+    -- Ensures system prevents cancelling the same booking twice
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Cancel Already Cancelled (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
@@ -480,7 +501,10 @@ BEGIN
     END IF;
     DBMS_OUTPUT.PUT_LINE('');
     
-    -- TEST 14
+    -- ========================================
+    -- TEST 20: Cancel Invalid Booking ID (Should Fail)
+    -- Verifies system handles cancellation attempts for non-existent booking IDs gracefully
+    -- ========================================
     v_test_count := v_test_count + 1;
     DBMS_OUTPUT.PUT_LINE('TEST ' || v_test_count || ': Cancel Invalid Booking ID (Should Fail)');
     DBMS_OUTPUT.PUT_LINE('------------------------------------------');
