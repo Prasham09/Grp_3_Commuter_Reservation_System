@@ -156,6 +156,8 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
             p_status := 'ERROR: Failed to register passenger - ' || SQLERRM;
     END register_passenger;
     
+
+    -- PROCEDURE: book_ticket    
     PROCEDURE book_ticket(
         p_passenger_id IN NUMBER,
         p_train_id IN NUMBER,
@@ -173,45 +175,76 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
         v_waitlist_pos NUMBER := NULL;
         v_booking_date DATE := SYSDATE;
         v_seat_class_upper VARCHAR2(10);
+        v_passenger_dob DATE;
+        v_passenger_age NUMBER;
     BEGIN
+        -- Initialize output parameters
         p_booking_id := NULL;
         p_seat_status := NULL;
         p_waitlist_position := NULL;
         
+        -- Normalize seat class to uppercase
         v_seat_class_upper := UPPER(TRIM(p_seat_class));
         
+        -- Validate seat class length (prevent buffer overflow)
         IF LENGTH(v_seat_class_upper) > 10 THEN
             p_status := 'ERROR: Invalid seat class - Use BUSINESS or ECONOMY only';
             RETURN;
         END IF;
         
+        -- Validate passenger exists
         IF NOT CRS_VALIDATION_PKG.is_passenger_valid(p_passenger_id) THEN
             p_status := 'ERROR: Invalid passenger ID - Passenger does not exist';
             RETURN;
         END IF;
         
+        -- ========================================
+        -- NEW: Validate passenger age - Minors not allowed
+        -- Minors (under 18) cannot book tickets
+        -- ========================================
+        BEGIN
+            SELECT date_of_birth INTO v_passenger_dob
+            FROM CRS_PASSENGER
+            WHERE passenger_id = p_passenger_id;
+            
+            v_passenger_age := FLOOR(MONTHS_BETWEEN(SYSDATE, v_passenger_dob) / 12);
+            
+            IF v_passenger_age < 18 THEN
+                p_status := 'ERROR: Minors (under 18 years) are not allowed to book tickets independently';
+                RETURN;
+            END IF;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                NULL;  -- Already validated above
+        END;
+        
+        -- Validate train
         IF NOT CRS_VALIDATION_PKG.is_train_valid(p_train_id) THEN
             p_status := 'ERROR: Invalid train ID - Train does not exist';
             RETURN;
         END IF;
         
+        -- Validate seat class
         IF NOT CRS_VALIDATION_PKG.is_seat_class_valid(v_seat_class_upper) THEN
             p_status := 'ERROR: Invalid seat class - Use BUSINESS or ECONOMY only';
             RETURN;
         END IF;
         
+        -- Validate booking date (within 7 days advance)
         IF NOT CRS_VALIDATION_PKG.is_booking_date_valid(v_booking_date, p_travel_date) THEN
             p_status := 'ERROR: Invalid booking date - Only 7 days advance booking allowed (travel date: ' || 
                        TO_CHAR(p_travel_date, 'DD-MON-YYYY') || ')';
             RETURN;
         END IF;
         
+        -- Validate train availability on travel date
         IF NOT CRS_VALIDATION_PKG.is_train_available_on_date(p_train_id, p_travel_date) THEN
             p_status := 'ERROR: Train not available on ' || TO_CHAR(p_travel_date, 'DAY DD-MON-YYYY') || 
                        ' - Check train schedule';
             RETURN;
         END IF;
         
+        -- Check seat availability
         v_available_seats := CRS_VALIDATION_PKG.get_available_seats(
             p_train_id, p_travel_date, v_seat_class_upper
         );
@@ -220,19 +253,25 @@ CREATE OR REPLACE PACKAGE BODY CRS_BOOKING_PKG AS
             p_train_id, p_travel_date, v_seat_class_upper
         );
         
+        -- Determine seat status based on availability
         IF v_available_seats > 0 THEN
+            -- Seats available - CONFIRMED
             v_seat_status := 'CONFIRMED';
         ELSIF v_waitlist_count < 5 THEN
+            -- No seats but waitlist available - WAITLISTED
             v_seat_status := 'WAITLISTED';
             v_waitlist_pos := v_waitlist_count + 1;
         ELSE
+            -- No seats and waitlist full
             p_status := 'ERROR: No seats available - All confirmed seats (40) and waitlist positions (5) are full for ' || 
                        v_seat_class_upper || ' class';
             RETURN;
         END IF;
         
+        -- Generate booking ID
         v_booking_id := seq_booking_id.NEXTVAL;
         
+        -- Insert reservation
         INSERT INTO CRS_RESERVATION (
             booking_id, passenger_id, train_id, travel_date,
             booking_date, seat_class, seat_status, waitlist_position
